@@ -1,0 +1,4 @@
+/src/main/java/com/netcompany/machinelearning/data/mnist
+*.iml
+/.idea
+/target
