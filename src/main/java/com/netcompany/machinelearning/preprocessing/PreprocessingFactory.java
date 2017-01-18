@@ -29,4 +29,16 @@ public class PreprocessingFactory {
         File f = new File(imagePath);
         return new ArrayList<String>(Arrays.asList(f.list()));
     }
+
+    public static void printImage(int[][] array) {
+        int w = array.length;
+        int h = array[0].length;
+
+        for (int j = 0; j < w; j++) {
+            for (int k = 0; k < h; k++) {
+                System.out.print(array[j][k] + "\t");
+            }
+            System.out.println();
+        }
+    }
 }
