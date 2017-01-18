@@ -1,6 +1,7 @@
 package com.netcompany.machinelearning.neuralNetwork;
 
 
+import com.netcompany.machinelearning.preprocessing.Preprocessing;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -37,8 +38,10 @@ public class NeuralNetwork {
 
 
         // ###############################################################
+        // OPPGAVE 1: PREPROSSESERING -> NORMALISERE
+        // ###############################################################
 
-        // Bruk din egen metode fra forrige oppgave, eller bruk den nedenfor
+        Preprocessing preprocessing = Preprocessing.create();
 
 
 
