@@ -18,8 +18,8 @@ public class Preprocessing {
     public static void main(String[] args) {
         Preprocessing preprocessing = new Preprocessing();
 
-        System.out.println(PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR));
-        System.out.println(PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR));
+        System.out.println("Total training images: " + preprocessing.trainingImages[0].length);
+        System.out.println("Total testing images: " + preprocessing.testImages[0].length);
 
         int[][][] imageArray = preprocessing.readImagesToArray(PreprocessingFactory.TRAINING_DIR);
 //
@@ -102,7 +102,7 @@ public class Preprocessing {
         for (final String folder : folderPaths) {
             ArrayList<String> imagePaths = getImagePaths(datasetPath + "/" + folder);
             for (final String imagePath : imagePaths) {
-                trainingImages[counter] = getImageAsArray(imagePath);
+                trainingImages[counter] = getImageAsArray(datasetPath + "/" + folder + "/" + imagePath);
             }
 
         }
