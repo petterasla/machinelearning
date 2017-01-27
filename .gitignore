@@ -2,3 +2,6 @@
 *.iml
 /.idea
 /target
+/logs
+**/mnist_png
+*.DS_Store
