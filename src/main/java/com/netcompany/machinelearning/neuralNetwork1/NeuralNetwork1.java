@@ -1,6 +1,5 @@
 package com.netcompany.machinelearning.neuralNetwork1;
 
-
 import com.netcompany.machinelearning.preprocessing.PreprocessingFactory;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
@@ -83,14 +82,14 @@ public class NeuralNetwork1 {
         model.setListeners(new ScoreIterationListener(1));
 
         log.info("Train model....");
-        for( int i=0; i<numEpochs; i++ ){
+        for (int i = 0; i < numEpochs; i++) {
             model.fit(mnistTrain);
         }
 
 
         log.info("Evaluate model....");
         Evaluation eval = new Evaluation(outputNum); //create an evaluation object with 10 possible classes
-        while(mnistTest.hasNext()){
+        while (mnistTest.hasNext()) {
             DataSet next = mnistTest.next();
             INDArray output = model.output(next.getFeatureMatrix()); //get the networks prediction
             eval.eval(next.getLabels(), output); //check the prediction against the true class
@@ -100,8 +99,6 @@ public class NeuralNetwork1 {
         log.info("****************Example finished********************");
 
 
-
-
     }
 
     private static double[][][] normalize(int[][][] trainingImages) {
@@ -109,13 +106,13 @@ public class NeuralNetwork1 {
         int width = PreprocessingFactory.width;
         int height = PreprocessingFactory.height;
 
-        double [][][] normalizedImages = new double[numberOfImages][width][height];
+        double[][][] normalizedImages = new double[numberOfImages][width][height];
 
         double MAX_PIXEL_VERDI = 255.0; // FORDI VI VET DET :)
 
-        for (int iCounter=0; iCounter < numberOfImages; iCounter++) {
-            for (int row=0; row < width; row++) {
-                for (int col=0; col < height; col++) {
+        for (int iCounter = 0; iCounter < numberOfImages; iCounter++) {
+            for (int row = 0; row < width; row++) {
+                for (int col = 0; col < height; col++) {
                     normalizedImages[iCounter][row][col] = trainingImages[iCounter][row][col] / MAX_PIXEL_VERDI;
                 }
             }
