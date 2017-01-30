@@ -30,7 +30,7 @@ public class NevraltNettverkBygger {
      *
      * @param antallInn koblinger inn til laget (= antall koblinger ut fra laget over)
      * @param antallUt  koblinger ut fra laget (= antall koblinger inn i laget under)
-     * @return
+     * @return {@link NevraltNettverkBygger}
      */
     public NevraltNettverkBygger leggTilLag(final Integer antallInn, final Integer antallUt) {
         lag.add(new NNLag(antallInn, antallUt));
