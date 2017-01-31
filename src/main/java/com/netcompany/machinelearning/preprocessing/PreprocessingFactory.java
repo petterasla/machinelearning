@@ -19,13 +19,14 @@ public class PreprocessingFactory {
         File f = new File(datasetPath);
         ArrayList<String> folderPaths = new ArrayList<String>(Arrays.asList(f.list()));
         for (final String folder : folderPaths) {
+            if (folder.equalsIgnoreCase(".ds_store")) continue;
             ArrayList<String> imagePaths = getImagePaths(datasetPath + "/" + folder);
             numberOfImages += imagePaths.size();
         }
         return numberOfImages;
     }
 
-    private static ArrayList<String> getImagePaths(String imagePath) {
+    public static ArrayList<String> getImagePaths(String imagePath) {
         File f = new File(imagePath);
         return new ArrayList<String>(Arrays.asList(f.list()));
     }

@@ -19,7 +19,7 @@ public class Preprocessing {
     }
 
     private Preprocessing() {
-        System.out.println("This may take a minute.\n\nLoading training set.");
+        System.out.println("This may take a minute.\n\nLoading training set and labels.");
 
         trainingImages = new int
                 [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)]
@@ -30,8 +30,9 @@ public class Preprocessing {
                 [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)];
 
         readImagesToArray(trainingImages, PreprocessingFactory.TRAINING_DIR);
+        readImageLabels(trainingLabels, PreprocessingFactory.TRAINING_DIR);
 
-        System.out.println("Total training images: " + getTrainingImages().length);
+        System.out.println("Total number of training images: " + getTrainingImages().length);
         System.out.println();
         System.out.println("Loading test set");
 
@@ -44,8 +45,9 @@ public class Preprocessing {
                 [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)];
 
         readImagesToArray(testImages, PreprocessingFactory.TEST_DIR);
-        System.out.println("Total testing images: " + getTestImages().length);
+        readImageLabels(testLabels, PreprocessingFactory.TEST_DIR);
 
+        System.out.println("Total number of testing images: " + getTestImages().length);
         System.out.println("\nFinished loading images");
 
     }
@@ -60,6 +62,11 @@ public class Preprocessing {
         return new Preprocessing();
     }
 
+    /**
+     *
+     * @param imagePath stien til ett bilde
+     * @return en to-dimensjonal int array representasjon av bilde med verdier innenfor 0-255.
+     */
     private int[][] getImageAsArray(String imagePath){
         try {
             BufferedImage image = ImageIO.read(new File(imagePath));
@@ -84,11 +91,17 @@ public class Preprocessing {
         return null;
     }
 
+    /**
+     *
+     * @param images Et array med hvilke data som skal lagres. F.eks trening
+     * @param datasetPath Stien til datasettet.
+     */
     private void readImagesToArray(int[][][] images, String datasetPath) {
         int counter = 0;
         File f = new File(datasetPath);
         ArrayList<String> folderPaths = new ArrayList<String>(Arrays.asList(f.list()));
         for (final String folder : folderPaths) {
+            if (folder.equalsIgnoreCase(".DS_STORE")) continue;
             String imageFolderPath = datasetPath + "/" + folder;
             ArrayList<String> imagePaths = getImagePaths(imageFolderPath);
             for (final String imagePath : imagePaths) {
@@ -102,12 +115,26 @@ public class Preprocessing {
         return new ArrayList<String>(Arrays.asList(f.list()));
     }
 
+    private void readImageLabels(int[] labels, String datasetPath) {
+        int counter = 0;
+        File f = new File(datasetPath);
+        ArrayList<String> imagePaths;
+        ArrayList<String> folderPaths = new ArrayList<String>(Arrays.asList(f.list()));
+        for (final String folder : folderPaths) {
+            if (folder.equalsIgnoreCase(".DS_STORE")) continue;
+            imagePaths = getImagePaths(datasetPath + "/" + folder);
+            for (final String imagePath : imagePaths) {
+                labels[counter] = Integer.parseInt(folder);
+                counter++;
+            }
+        }
+    }
+
     public int[][][] getTrainingImages() {
         return trainingImages;
     }
-
-    public int[][][] getTestImages() {
-        return testImages;
-    }
+    public int[][][] getTestImages() {return testImages;}
+    public int[] getTrainingLabels() {return trainingLabels;}
+    public int[] getTestLabels() {return testLabels;}
 
 }
