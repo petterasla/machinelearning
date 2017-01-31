@@ -10,7 +10,9 @@ import java.util.Arrays;
 public class Preprocessing {
 
     private int[][][] trainingImages;
+    private int[] trainingLabels;
     private int[][][] testImages;
+    private int[] testLabels;
 
     public static void main(String[] args) {
         Preprocessing preprocessing = Preprocessing.create();
@@ -24,6 +26,9 @@ public class Preprocessing {
                 [PreprocessingFactory.height]
                 [PreprocessingFactory.height];
 
+        trainingLabels = new int
+                [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)];
+
         readImagesToArray(trainingImages, PreprocessingFactory.TRAINING_DIR);
 
         System.out.println("Total training images: " + getTrainingImages().length);
@@ -35,6 +40,9 @@ public class Preprocessing {
                 [PreprocessingFactory.height]
                 [PreprocessingFactory.height];
 
+        testLabels = new int
+                [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)];
+
         readImagesToArray(testImages, PreprocessingFactory.TEST_DIR);
         System.out.println("Total testing images: " + getTestImages().length);
 
@@ -42,6 +50,12 @@ public class Preprocessing {
 
     }
 
+    /**
+     * Oppretter et preprosseseringsobject som leser inn trenings- og testbilder samt fasit til disse.
+     *
+     * Hent dataene ved hjelp av getters
+     *
+     */
     public static Preprocessing create()  {
         return new Preprocessing();
     }
