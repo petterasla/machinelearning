@@ -5,6 +5,7 @@ import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.weights.WeightInit;
 
 import java.util.List;
@@ -70,13 +71,14 @@ public class NevraltNettverkBygger {
                 .regularization(true).l2(1e-4)
                 .list();
 
-        for (int i = 0; i < lag.size() - 1; i++) {
+        for (int i = 0; i < lag.size(); i++) {
+            final boolean erOutputLag = i == lag.size() - 1;
             final NNLag gjemtLag = lag.get(i);
             lagListe.layer(
-                    i, new DenseLayer.Builder()
+                    i, (erOutputLag ? new OutputLayer.Builder() : new DenseLayer.Builder())
                             .nIn(gjemtLag.INN)
                             .nOut(gjemtLag.UT)
-                            .activation(i < lag.size() - 2 ? "relu" : "softmax") // Sørger for softmax på output-lag
+                            .activation(erOutputLag ? "softmax" : "relu") // Sørger for softmax på output-lag
                             .weightInit(WeightInit.XAVIER)
                             .build());
         }

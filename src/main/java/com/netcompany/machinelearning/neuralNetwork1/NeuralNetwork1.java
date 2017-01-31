@@ -30,6 +30,7 @@ public class NeuralNetwork1 {
         // ###############################################################
         // OPPGAVE 1: PREPROSSESERING -> NORMALISERE OG FLAT UT
         // ###############################################################
+        //TODO: Lag mindre datasett for utviklingsøyemed, slik at en slipper å laste inn hele MNIST hver gang en vil teste koden sin
 
         Preprocessing preprocessing = Preprocessing.create();
 
@@ -44,7 +45,7 @@ public class NeuralNetwork1 {
         // ###############################################################
 
         NevraltNettverkBygger nevraltNettverkBygger = new NevraltNettverkBygger();
-        nevraltNettverkBygger = nevraltNettverkBygger.leggTilLag(256, 32);
+        nevraltNettverkBygger = nevraltNettverkBygger.leggTilLag(784, 32);
         nevraltNettverkBygger = nevraltNettverkBygger.leggTilLag(32, 10);
 
         NevraltNettverk nevraltNettverk = nevraltNettverkBygger.bygg();
