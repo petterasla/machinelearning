@@ -82,6 +82,7 @@ public class NevraltNettverkBygger {
         }
         lagListe.pretrain(false).backprop(true);
 
+
         return new NevraltNettverk(lagListe.build());
     }
 }

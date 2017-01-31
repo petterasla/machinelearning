@@ -43,10 +43,16 @@ public class NeuralNetwork1 {
         // OPPGAVE 2: NEVRALT NETTVERK -> BYGG NETTVERK
         // ###############################################################
 
-        NevraltNettverk nevraltNettverk = new NevraltNettverkBygger().bygg();
+        NevraltNettverkBygger nevraltNettverkBygger = new NevraltNettverkBygger();
+        nevraltNettverkBygger = nevraltNettverkBygger.leggTilLag(256, 32);
+        nevraltNettverkBygger = nevraltNettverkBygger.leggTilLag(32, 10);
+
+        NevraltNettverk nevraltNettverk = nevraltNettverkBygger.bygg();
+
 
         nevraltNettverk.tren(trainingFlatImages, preprocessing.getTrainingLabels());
 
+        System.out.println("FERDIG TRENT!!!");
         // Oppgave a)
 //        final int numRows = 28;
 //        final int numColumns = 28;
