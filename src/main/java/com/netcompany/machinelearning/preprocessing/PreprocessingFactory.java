@@ -10,6 +10,8 @@ public class PreprocessingFactory {
     private static String DATA_DIR = BASE_DIR + "/src/main/java/com/netcompany/machinelearning/data/";
     public static String TRAINING_DIR = DATA_DIR + "mnist_png/training";
     public static String TEST_DIR = DATA_DIR + "mnist_png/testing";
+    public static int SUBSET_TRAINING_SIZE = 100;
+    public static int SUBSET_TEST_SIZE = 30;
 
     public static final int height = 28;
     public static final int width = 28;

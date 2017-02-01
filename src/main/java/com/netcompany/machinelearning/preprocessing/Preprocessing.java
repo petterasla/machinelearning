@@ -15,51 +15,137 @@ public class Preprocessing {
     private int[] testLabels;
 
     public static void main(String[] args) {
-        Preprocessing preprocessing = Preprocessing.create();
+        Preprocessing preprocessing = Preprocessing.create(false);
     }
 
-    private Preprocessing() {
-        System.out.println("This may take a minute.\n\nLoading training set and labels.");
+    private Preprocessing(Boolean lesInnHeleDatasettet) {
+        if (lesInnHeleDatasettet) {
+            System.out.println("This may take a minute.\n\nLoading training set and labels.");
 
-        trainingImages = new int
-                [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)]
-                [PreprocessingFactory.height]
-                [PreprocessingFactory.height];
+            trainingImages = new int
+                    [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)]
+                    [PreprocessingFactory.height]
+                    [PreprocessingFactory.height];
 
-        trainingLabels = new int
-                [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)];
+            trainingLabels = new int
+                    [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)];
 
-        readImagesToArray(trainingImages, PreprocessingFactory.TRAINING_DIR);
-        readImageLabels(trainingLabels, PreprocessingFactory.TRAINING_DIR);
+            readImagesToArray(trainingImages, PreprocessingFactory.TRAINING_DIR);
+            readImageLabels(trainingLabels, PreprocessingFactory.TRAINING_DIR);
 
-        System.out.println("Total number of training images: " + getTrainingImages().length);
-        System.out.println();
-        System.out.println("Loading test set");
+            System.out.println("Total number of training images: " + getTrainingImages().length);
+            System.out.println();
+            System.out.println("Loading test set");
 
-        testImages = new int
-                [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)]
-                [PreprocessingFactory.height]
-                [PreprocessingFactory.height];
+            testImages = new int
+                    [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)]
+                    [PreprocessingFactory.height]
+                    [PreprocessingFactory.height];
 
-        testLabels = new int
-                [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)];
+            testLabels = new int
+                    [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)];
 
-        readImagesToArray(testImages, PreprocessingFactory.TEST_DIR);
-        readImageLabels(testLabels, PreprocessingFactory.TEST_DIR);
+            readImagesToArray(testImages, PreprocessingFactory.TEST_DIR);
+            readImageLabels(testLabels, PreprocessingFactory.TEST_DIR);
 
-        System.out.println("Total number of testing images: " + getTestImages().length);
-        System.out.println("\nFinished loading images");
+            System.out.println("Total number of testing images: " + getTestImages().length);
+            System.out.println("\nFinished loading images");
+        } else {
+            System.out.println("Laster inn subsett av dataen");
+            trainingImages = new int
+                    [PreprocessingFactory.SUBSET_TRAINING_SIZE]
+                    [PreprocessingFactory.height]
+                    [PreprocessingFactory.width];
+            trainingLabels = new int
+                    [PreprocessingFactory.SUBSET_TRAINING_SIZE];
+
+            readSubsetOfImages(trainingImages, PreprocessingFactory.TRAINING_DIR);
+            readSubsetOfImageLabels(trainingLabels, PreprocessingFactory.TRAINING_DIR);
+
+            testImages = new int
+                    [PreprocessingFactory.SUBSET_TEST_SIZE]
+                    [PreprocessingFactory.height]
+                    [PreprocessingFactory.width];
+            testLabels = new int
+                    [PreprocessingFactory.SUBSET_TEST_SIZE];
+
+            readSubsetOfImages(testImages, PreprocessingFactory.TRAINING_DIR);
+            readSubsetOfImageLabels(testLabels, PreprocessingFactory.TRAINING_DIR);
+
+
+            System.out.println("Innlasting av subsett ferdig\n");
+
+        }
+
 
     }
 
+    /**
+     * Leser inn fasit for 30 labels.
+     *
+     * @param labels tom array
+     * @param datasetPath
+     * @return en array med fasit
+     */
+    private int[] readSubsetOfImageLabels(int[] labels, String datasetPath) {
+        int counter = 0;
+        int perLabelCounter = 0;
+        File f = new File(datasetPath);
+        ArrayList<String> imagePaths;
+        ArrayList<String> folderPaths = new ArrayList<String>(Arrays.asList(f.list()));
+        for (final String folder : folderPaths) {
+            if (folder.equalsIgnoreCase(".DS_STORE")) continue;
+            imagePaths = getImagePaths(datasetPath + "/" + folder);
+            for (final String imagePath : imagePaths) {
+                if (perLabelCounter >= labels.length/10) {
+                    perLabelCounter = 0;
+                    break;
+                }
+                labels[counter] = Integer.parseInt(folder);
+                counter++;
+                perLabelCounter++;
+            }
+        }
+        return labels;
+    }
+
+    /**
+     * Leser inn 10 bilder av hvert tall, total 100 bilder;
+     *
+     * @param images trening eller test 3d array
+     * @param datasetPath stien til datasettet
+     * @return en 3d array med bilder
+     */
+    private int[][][] readSubsetOfImages(int[][][] images, String datasetPath) {
+        int counter = 0;
+        int perLabelCounter = 0;
+        File f = new File(datasetPath);
+        ArrayList<String> folderPaths = new ArrayList<String>(Arrays.asList(f.list()));
+        for (final String folder : folderPaths) {
+            if (folder.equalsIgnoreCase(".DS_STORE")) continue;
+            String imageFolderPath = datasetPath + "/" + folder;
+            ArrayList<String> imagePaths = getImagePaths(imageFolderPath);
+            for (final String imagePath : imagePaths) {
+                if (perLabelCounter >= images.length/10) {
+                    perLabelCounter = 0;
+                    break;
+                }
+                images[counter] = getImageAsArray(imageFolderPath + "/" + imagePath);
+                perLabelCounter++;
+                counter++;
+            }
+
+        }
+        return images;
+    }
     /**
      * Oppretter et preprosseseringsobject som leser inn trenings- og testbilder samt fasit til disse.
      *
      * Hent dataene ved hjelp av getters
      *
      */
-    public static Preprocessing create()  {
-        return new Preprocessing();
+    public static Preprocessing create(Boolean lesInnHeleDatasettet)  {
+        return new Preprocessing(lesInnHeleDatasettet);
     }
 
     /**
