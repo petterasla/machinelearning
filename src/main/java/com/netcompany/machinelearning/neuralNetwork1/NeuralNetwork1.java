@@ -3,21 +3,6 @@ package com.netcompany.machinelearning.neuralNetwork1;
 
 import com.netcompany.machinelearning.preprocessing.Preprocessing;
 import com.netcompany.machinelearning.preprocessing.PreprocessingFactory;
-import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
-import org.deeplearning4j.eval.Evaluation;
-import org.deeplearning4j.nn.api.OptimizationAlgorithm;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.Updater;
-import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.nn.weights.WeightInit;
-import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.DataSet;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +17,8 @@ public class NeuralNetwork1 {
         // ###############################################################
         //TODO: Lag mindre datasett for utviklingsøyemed, slik at en slipper å laste inn hele MNIST hver gang en vil teste koden sin
 
-        Preprocessing preprocessing = Preprocessing.create();
+        Boolean lesInnHeleDatasettet = false;
+        Preprocessing preprocessing = Preprocessing.create(lesInnHeleDatasettet);
 
         // a) Normaliser bildene
         double[][][] trainingImages = normalize(preprocessing.getTrainingImages());
