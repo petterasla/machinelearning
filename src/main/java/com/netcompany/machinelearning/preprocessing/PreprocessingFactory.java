@@ -12,6 +12,7 @@ public class PreprocessingFactory {
     public static String TEST_DIR = DATA_DIR + "mnist_png/testing";
     public static int SUBSET_TRAINING_SIZE = 100;
     public static int SUBSET_TEST_SIZE = 30;
+    public static int ANTALL_KLASSER = 10;
 
     public static final int height = 28;
     public static final int width = 28;

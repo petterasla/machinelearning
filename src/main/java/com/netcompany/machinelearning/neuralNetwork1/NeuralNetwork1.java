@@ -22,9 +22,11 @@ public class NeuralNetwork1 {
 
         // a) Normaliser bildene
         double[][][] trainingImages = normalize(preprocessing.getTrainingImages());
+        double[][][] testbilder = normalize(preprocessing.getTestImages());
 
         // b) Flat ut bildene
         double[][] trainingFlatImages = flatMapImage(trainingImages);
+        double[][] testFlatBilder = flatMapImage(testbilder);
 
         // ###############################################################
         // OPPGAVE 2: NEVRALT NETTVERK -> BYGG NETTVERK
@@ -37,9 +39,13 @@ public class NeuralNetwork1 {
         NevraltNettverk nevraltNettverk = nevraltNettverkBygger.bygg();
 
 
+        System.out.println("Trener..");
         nevraltNettverk.tren(trainingFlatImages, preprocessing.getTrainingLabels());
 
-        System.out.println("FERDIG TRENT!!!");
+        System.out.println("Ferdig trent. Evaluerer...");
+        nevraltNettverk.evaluer(testFlatBilder, preprocessing.getTestLabels());
+
+        System.out.println("FERDIG");
         // Oppgave a)
 //        final int numRows = 28;
 //        final int numColumns = 28;
@@ -142,6 +148,7 @@ public class NeuralNetwork1 {
         for (int col = 0; col < image.length; col++) {
             for (int row = 0; row < image[col].length; row++) {
                 flatImage[counter] = image[col][row];
+                counter++;
             }
         }
         return flatImage;
