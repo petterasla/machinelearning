@@ -15,11 +15,11 @@ public class NeuralNetwork1 {
         // ###############################################################
         // OPPGAVE 1: PREPROSSESERING -> NORMALISERE OG FLAT UT
         // ###############################################################
-        //TODO: Lag mindre datasett for utviklingsøyemed, slik at en slipper å laste inn hele MNIST hver gang en vil teste koden sin
 
         Boolean lesInnHeleDatasettet = false;
         Preprocessing preprocessing = Preprocessing.create(lesInnHeleDatasettet);
 
+        //TODO: Flate ut først, deretter normalisere
         // a) Normaliser bildene
         double[][][] trainingImages = normalize(preprocessing.getTrainingImages());
         double[][][] testbilder = normalize(preprocessing.getTestImages());
@@ -32,12 +32,14 @@ public class NeuralNetwork1 {
         // OPPGAVE 2: NEVRALT NETTVERK -> BYGG NETTVERK
         // ###############################################################
 
-        NevraltNettverkBygger nevraltNettverkBygger = new NevraltNettverkBygger();
-        nevraltNettverkBygger = nevraltNettverkBygger.leggTilLag(784, 32);
-        nevraltNettverkBygger = nevraltNettverkBygger.leggTilLag(32, 10);
+        final NevraltNettverk nevraltNettverk =
+                new NevraltNettverkBygger()
+                        .leggTilLag(784, 100)
+                        .leggTilLag(100, 10)
+                        .bygg();
 
-        NevraltNettverk nevraltNettverk = nevraltNettverkBygger.bygg();
-
+        nevraltNettverk.setAntallEpoker(200);
+        nevraltNettverk.setBatchStorrelse(1000);
 
         System.out.println("Trener..");
         nevraltNettverk.tren(trainingFlatImages, preprocessing.getTrainingLabels());
@@ -107,10 +109,6 @@ public class NeuralNetwork1 {
 
         //log.info(eval.stats());
         //log.info("****************Example finished********************");
-
-
-
-
     }
 
     private static double[][][] normalize(int[][][] trainingImages) {
@@ -118,14 +116,14 @@ public class NeuralNetwork1 {
         int width = PreprocessingFactory.width;
         int height = PreprocessingFactory.height;
 
-        double [][][] normalizedImages = new double[numberOfImages][width][height];
+        double[][][] normalizedImages = new double[numberOfImages][width][height];
 
         double MAX_PIXEL_VERDI = 255.0; // FORDI VI VET DET :)
 
-        for (int iCounter=0; iCounter < numberOfImages; iCounter++) {
-            for (int row=0; row < width; row++) {
-                for (int col=0; col < height; col++) {
-                    normalizedImages[iCounter][row][col] = trainingImages[iCounter][row][col] / MAX_PIXEL_VERDI;
+        for (int iCounter = 0; iCounter < numberOfImages; iCounter++) {
+            for (int row = 0; row < width; row++) {
+                for (int col = 0; col < height; col++) {
+                    normalizedImages[iCounter][row][col] = (trainingImages[iCounter][row][col] / MAX_PIXEL_VERDI) * 2 - 1;
                 }
             }
         }
@@ -134,7 +132,7 @@ public class NeuralNetwork1 {
 
     private static double[][] flatMapImage(double[][][] images) {
         int numberOfImages = images.length;
-        double[][] flatImages = new double[numberOfImages][images[0].length*images[0][0].length];
+        double[][] flatImages = new double[numberOfImages][images[0].length * images[0][0].length];
 
         for (int i = 0; i < numberOfImages; i++) {
             flatImages[i] = flatImage(images[i]);
