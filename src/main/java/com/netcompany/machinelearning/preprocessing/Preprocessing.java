@@ -25,7 +25,7 @@ public class Preprocessing {
             trainingImages = new int
                     [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)]
                     [PreprocessingFactory.height]
-                    [PreprocessingFactory.height];
+                    [PreprocessingFactory.width];
 
             trainingLabels = new int
                     [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TRAINING_DIR)];
@@ -37,13 +37,12 @@ public class Preprocessing {
             System.out.println();
             System.out.println("Loading test set");
 
-            testImages = new int
-                    [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)]
-                    [PreprocessingFactory.height]
-                    [PreprocessingFactory.height];
+            testImages =
+                    new int[PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)]
+                            [PreprocessingFactory.height]
+                            [PreprocessingFactory.width];
 
-            testLabels = new int
-                    [PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)];
+            testLabels = new int[PreprocessingFactory.getTotalNumberOfImages(PreprocessingFactory.TEST_DIR)];
 
             readImagesToArray(testImages, PreprocessingFactory.TEST_DIR);
             readImageLabels(testLabels, PreprocessingFactory.TEST_DIR);
@@ -69,21 +68,18 @@ public class Preprocessing {
             testLabels = new int
                     [PreprocessingFactory.SUBSET_TEST_SIZE];
 
-            readSubsetOfImages(testImages, PreprocessingFactory.TRAINING_DIR);
-            readSubsetOfImageLabels(testLabels, PreprocessingFactory.TRAINING_DIR);
+            readSubsetOfImages(testImages, PreprocessingFactory.TEST_DIR);
+            readSubsetOfImageLabels(testLabels, PreprocessingFactory.TEST_DIR);
 
 
             System.out.println("Innlasting av subsett ferdig\n");
-
         }
-
-
     }
 
     /**
      * Leser inn fasit for 30 labels.
      *
-     * @param labels tom array
+     * @param labels      tom array
      * @param datasetPath
      * @return en array med fasit
      */
@@ -97,7 +93,7 @@ public class Preprocessing {
             if (folder.equalsIgnoreCase(".DS_STORE")) continue;
             imagePaths = getImagePaths(datasetPath + "/" + folder);
             for (final String imagePath : imagePaths) {
-                if (perLabelCounter >= labels.length/10) {
+                if (perLabelCounter >= labels.length / 10) {
                     perLabelCounter = 0;
                     break;
                 }
@@ -112,7 +108,7 @@ public class Preprocessing {
     /**
      * Leser inn 10 bilder av hvert tall, total 100 bilder;
      *
-     * @param images trening eller test 3d array
+     * @param images      trening eller test 3d array
      * @param datasetPath stien til datasettet
      * @return en 3d array med bilder
      */
@@ -126,7 +122,7 @@ public class Preprocessing {
             String imageFolderPath = datasetPath + "/" + folder;
             ArrayList<String> imagePaths = getImagePaths(imageFolderPath);
             for (final String imagePath : imagePaths) {
-                if (perLabelCounter >= images.length/10) {
+                if (perLabelCounter >= images.length / 10) {
                     perLabelCounter = 0;
                     break;
                 }
@@ -138,26 +134,25 @@ public class Preprocessing {
         }
         return images;
     }
+
     /**
      * Oppretter et preprosseseringsobject som leser inn trenings- og testbilder samt fasit til disse.
-     *
+     * <p>
      * Hent dataene ved hjelp av getters
-     *
      */
-    public static Preprocessing create(Boolean lesInnHeleDatasettet)  {
+    public static Preprocessing create(Boolean lesInnHeleDatasettet) {
         return new Preprocessing(lesInnHeleDatasettet);
     }
 
     /**
-     *
      * @param imagePath stien til ett bilde
      * @return en to-dimensjonal int array representasjon av bilde med verdier innenfor 0-255.
      */
-    private int[][] getImageAsArray(String imagePath){
+    private int[][] getImageAsArray(String imagePath) {
         try {
             BufferedImage image = ImageIO.read(new File(imagePath));
             WritableRaster raster = image.getRaster();
-            DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
+            DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
 
             int w = image.getWidth();
             int h = image.getHeight();
@@ -178,20 +173,19 @@ public class Preprocessing {
     }
 
     /**
-     *
-     * @param images Et array med hvilke data som skal lagres. F.eks trening
+     * @param images      Et array med hvilke data som skal lagres. F.eks trening
      * @param datasetPath Stien til datasettet.
      */
     private void readImagesToArray(int[][][] images, String datasetPath) {
         int counter = 0;
         File f = new File(datasetPath);
-        ArrayList<String> folderPaths = new ArrayList<String>(Arrays.asList(f.list()));
+        ArrayList<String> folderPaths = new ArrayList<>(Arrays.asList(f.list()));
         for (final String folder : folderPaths) {
             if (folder.equalsIgnoreCase(".DS_STORE")) continue;
             String imageFolderPath = datasetPath + "/" + folder;
             ArrayList<String> imagePaths = getImagePaths(imageFolderPath);
             for (final String imagePath : imagePaths) {
-                images[counter] = getImageAsArray(imageFolderPath + "/" + imagePath);
+                images[counter++] = getImageAsArray(imageFolderPath + "/" + imagePath);
             }
         }
     }
@@ -219,8 +213,17 @@ public class Preprocessing {
     public int[][][] getTrainingImages() {
         return trainingImages;
     }
-    public int[][][] getTestImages() {return testImages;}
-    public int[] getTrainingLabels() {return trainingLabels;}
-    public int[] getTestLabels() {return testLabels;}
+
+    public int[][][] getTestImages() {
+        return testImages;
+    }
+
+    public int[] getTrainingLabels() {
+        return trainingLabels;
+    }
+
+    public int[] getTestLabels() {
+        return testLabels;
+    }
 
 }
