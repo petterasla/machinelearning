@@ -19,15 +19,11 @@ public class NevraltNettverkBygger {
 
     private static final Integer RAND_SEED = 42;
 
-    private Integer inputStorrelse;
-    private Integer antallKlasser;
-    private Integer batchStorrelse;
-    private Integer antallEpoker;
-    private Double laeringsRate = 0.5;
+    private Double laeringsRate = 0.006;
     private final List<NNLag> lag = Lists.newArrayList();
 
     /**
-     * Legger til et nytt lag i det nevrale nettet.
+     * Legger til et nytt lag i det nevrale nettet. Bygges fra toppen (fra "input layer") og ned (til "output layer").
      *
      * @param antallInn koblinger inn til laget (= antall koblinger ut fra laget over)
      * @param antallUt  koblinger ut fra laget (= antall koblinger inn i laget under)
@@ -63,27 +59,26 @@ public class NevraltNettverkBygger {
     public NevraltNettverk bygg() {
         final NeuralNetConfiguration.ListBuilder lagListe = new NeuralNetConfiguration.Builder()
                 .seed(RAND_SEED)
-                // use stochastic gradient descent as an optimization algorithm
+                // Bruker algoritmen "stochastic gradient descent" for å optimalisere vekter
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .iterations(1)
                 .learningRate(laeringsRate)
-                .updater(Updater.NESTEROVS).momentum(0.9) //specify the rate of change of the learning rate.
+                .updater(Updater.NESTEROVS).momentum(0.9)
                 .regularization(true).l2(1e-4)
                 .list();
 
         for (int i = 0; i < lag.size(); i++) {
             final boolean erOutputLag = i == lag.size() - 1;
-            final NNLag gjemtLag = lag.get(i);
+            final NNLag nnLag = lag.get(i);
             lagListe.layer(
                     i, (erOutputLag ? new OutputLayer.Builder() : new DenseLayer.Builder())
-                            .nIn(gjemtLag.INN)
-                            .nOut(gjemtLag.UT)
+                            .nIn(nnLag.INN)
+                            .nOut(nnLag.UT)
                             .activation(erOutputLag ? "softmax" : "relu") // Sørger for softmax på output-lag
                             .weightInit(WeightInit.XAVIER)
                             .build());
         }
         lagListe.pretrain(false).backprop(true);
-
 
         return new NevraltNettverk(lagListe.build());
     }
