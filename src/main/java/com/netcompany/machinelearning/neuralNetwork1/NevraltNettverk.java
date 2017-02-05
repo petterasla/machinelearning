@@ -6,8 +6,10 @@ import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.cpu.nativecpu.NDArray;
+import org.nd4j.linalg.util.FeatureUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +20,8 @@ import org.slf4j.LoggerFactory;
  */
 public class NevraltNettverk {
 
-    private static final Integer RAND_SEED = 42;
     private static Logger logg = LoggerFactory.getLogger(NevraltNettverk.class);
 
-
-    private Integer inputStorrelse;
     private Integer antallKlasser;
     private Integer batchStorrelse;
     private Integer antallEpoker;
@@ -32,7 +31,7 @@ public class NevraltNettverk {
 
     public NevraltNettverk(final MultiLayerConfiguration nnKonfigurasjon) {
         logg.info("Lager modell...");
-        antallEpoker = 1;
+        antallEpoker = 100;
         batchStorrelse = 1;
         antallKlasser = PreprocessingFactory.ANTALL_KLASSER;
         modell = new MultiLayerNetwork(nnKonfigurasjon);
@@ -60,6 +59,7 @@ public class NevraltNettverk {
         modell.setInputMiniBatchSize(batchStorrelse);
 
         logg.info("Trener...");
+        modell.setListeners(new ScoreIterationListener(1));
         for (int i = 0; i < antallEpoker; i++) {
             modell.fit(treningsMatrise, treningsfasit);
         }
@@ -70,7 +70,10 @@ public class NevraltNettverk {
         final Evaluation eval = new Evaluation(antallKlasser);
 
         INDArray prediksjoner = modell.output(new NDArray(testdata));
-        eval.eval(prediksjoner, new NDArray(testfasit));
+
+        final INDArray fasitSomOutputMatrise = FeatureUtil.toOutcomeMatrix(testfasit, antallKlasser);
+
+        eval.eval(fasitSomOutputMatrise, prediksjoner);
 
         logg.info(eval.stats());
     }
