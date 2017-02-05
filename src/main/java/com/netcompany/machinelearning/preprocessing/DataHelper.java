@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PreprocessingFactory {
+public class DataHelper {
     private static String BASE_DIR = System.getProperty("user.dir");
     private static String DATA_DIR = BASE_DIR + "/src/main/java/com/netcompany/machinelearning/data/";
     public static String TRAINING_DIR = DATA_DIR + "mnist_png/training";

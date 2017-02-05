@@ -1,10 +1,9 @@
 package com.netcompany.machinelearning.neuralNetwork1;
 
-import com.netcompany.machinelearning.preprocessing.PreprocessingFactory;
+import com.netcompany.machinelearning.preprocessing.DataHelper;
 import org.apache.commons.lang3.Validate;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -33,7 +32,7 @@ public class NevraltNettverk {
         logg.info("Lager modell...");
         antallEpoker = 100;
         batchStorrelse = 1;
-        antallKlasser = PreprocessingFactory.ANTALL_KLASSER;
+        antallKlasser = DataHelper.ANTALL_KLASSER;
         modell = new MultiLayerNetwork(nnKonfigurasjon);
         modell.init();
     }
