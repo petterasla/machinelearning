@@ -1,6 +1,6 @@
 package com.netcompany.machinelearning.neuralNetwork1;
 
-import com.netcompany.machinelearning.preprocessing.DataHelper;
+import com.netcompany.machinelearning.preprocessing.DataHjelper;
 import org.apache.commons.lang3.Validate;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -32,7 +32,7 @@ public class NevraltNettverk {
         logg.info("Lager modell...");
         antallEpoker = 100;
         batchStorrelse = 1;
-        antallKlasser = DataHelper.ANTALL_KLASSER;
+        antallKlasser = DataHjelper.ANTALL_KLASSER;
         modell = new MultiLayerNetwork(nnKonfigurasjon);
         modell.init();
     }
@@ -42,15 +42,15 @@ public class NevraltNettverk {
      *
      * @param antallEpoker antall epoker
      */
-    public void setAntallEpoker(final Integer antallEpoker) {
+    void setAntallEpoker(final Integer antallEpoker) {
         this.antallEpoker = antallEpoker;
     }
 
-    public void setBatchStorrelse(final Integer batchStorrelse) {
+    void setBatchStorrelse(final Integer batchStorrelse) {
         this.batchStorrelse = batchStorrelse;
     }
 
-    public void tren(final double[][] treningsdata, int[] treningsfasit) {
+    void tren(final double[][] treningsdata, int[] treningsfasit) {
         Validate.isTrue(treningsdata.length == treningsfasit.length,
                 "Kan ikke trene modell når antall treningseksempler er ulik antall fasit-klasser!");
 
@@ -64,11 +64,11 @@ public class NevraltNettverk {
         }
     }
 
-    public void evaluer(double[][] testdata, int[] testfasit) {
+    void evaluer(double[][] testdata, int[] testfasit) {
         logg.info("Evaluerer...");
         final Evaluation eval = new Evaluation(antallKlasser);
 
-        INDArray prediksjoner = modell.output(new NDArray(testdata));
+        final INDArray prediksjoner = modell.output(new NDArray(testdata));
 
         final INDArray fasitSomOutputMatrise = FeatureUtil.toOutcomeMatrix(testfasit, antallKlasser);
 
