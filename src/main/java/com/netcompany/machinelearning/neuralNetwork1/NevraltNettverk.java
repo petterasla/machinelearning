@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NevraltNettverk {
 
-    private static Logger logg = LoggerFactory.getLogger(NevraltNettverk.class);
+    private static Logger LOGG = LoggerFactory.getLogger(NevraltNettverk.class);
 
     private Integer antallKlasser;
     private Integer batchStorrelse;
@@ -29,8 +29,8 @@ public class NevraltNettverk {
 
 
     public NevraltNettverk(final MultiLayerConfiguration nnKonfigurasjon) {
-        logg.info("Lager modell...");
-        antallEpoker = 100;
+        LOGG.info("Lager modell...");
+        antallEpoker = 1;
         batchStorrelse = 1;
         antallKlasser = DataHjelper.ANTALL_KLASSER;
         modell = new MultiLayerNetwork(nnKonfigurasjon);
@@ -57,15 +57,16 @@ public class NevraltNettverk {
         final INDArray treningsMatrise = new NDArray(treningsdata);
         modell.setInputMiniBatchSize(batchStorrelse);
 
-        logg.info("Trener...");
+        LOGG.info("Trener...");
         modell.setListeners(new ScoreIterationListener(1));
+        modell.setListeners(new Graf(10));
         for (int i = 0; i < antallEpoker; i++) {
             modell.fit(treningsMatrise, treningsfasit);
         }
     }
 
-    void evaluer(double[][] testdata, int[] testfasit) {
-        logg.info("Evaluerer...");
+    void evaluer(final double[][] testdata, final int[] testfasit) {
+        LOGG.info("Evaluerer...");
         final Evaluation eval = new Evaluation(antallKlasser);
 
         final INDArray prediksjoner = modell.output(new NDArray(testdata));
@@ -74,6 +75,6 @@ public class NevraltNettverk {
 
         eval.eval(fasitSomOutputMatrise, prediksjoner);
 
-        logg.info(eval.stats());
+        LOGG.info(eval.stats());
     }
 }
