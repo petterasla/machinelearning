@@ -1,32 +1,32 @@
 package com.netcompany.machinelearning.neuralNetwork1;
 
 
-import com.netcompany.machinelearning.preprocessing.Preprocessing;
-import com.netcompany.machinelearning.preprocessing.PreprocessingFactory;
+import com.netcompany.machinelearning.preprocessing.DataLoader;
+import com.netcompany.machinelearning.preprocessing.DataHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NeuralNetwork1 {
 
-    private static Logger log = LoggerFactory.getLogger(NeuralNetwork1.class);
+    private static final Logger LOGG = LoggerFactory.getLogger(NeuralNetwork1.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
         // ###############################################################
         // OPPGAVE 1: PREPROSSESERING -> NORMALISERE OG FLAT UT
         // ###############################################################
 
-        Boolean lesInnHeleDatasettet = false;
-        Preprocessing preprocessing = Preprocessing.create(lesInnHeleDatasettet);
+        final Boolean lesInnHeleDatasettet = false;
+        final DataLoader dataLoader = new DataLoader(lesInnHeleDatasettet);
 
         //TODO: Flate ut først, deretter normalisere
         // a) Normaliser bildene
-        double[][][] trainingImages = normalize(preprocessing.getTrainingImages());
-        double[][][] testbilder = normalize(preprocessing.getTestImages());
+        final double[][][] trainingImages = normalize(dataLoader.getTrainingImages());
+        final double[][][] testbilder = normalize(dataLoader.getTestImages());
 
         // b) Flat ut bildene
-        double[][] trainingFlatImages = flatMapImage(trainingImages);
-        double[][] testFlatBilder = flatMapImage(testbilder);
+        final double[][] trainingFlatImages = flatMapImage(trainingImages);
+        final double[][] testFlatBilder = flatMapImage(testbilder);
 
         // ###############################################################
         // OPPGAVE 2: NEVRALT NETTVERK -> BYGG NETTVERK
@@ -38,16 +38,16 @@ public class NeuralNetwork1 {
                         .leggTilLag(100, 10)
                         .bygg();
 
-        nevraltNettverk.setAntallEpoker(200);
-        nevraltNettverk.setBatchStorrelse(1000);
+        nevraltNettverk.setAntallEpoker(50);
+        nevraltNettverk.setBatchStorrelse(50);
 
-        System.out.println("Trener..");
-        nevraltNettverk.tren(trainingFlatImages, preprocessing.getTrainingLabels());
+        LOGG.info("Trener..");
+        nevraltNettverk.tren(trainingFlatImages, dataLoader.getTrainingLabels());
 
-        System.out.println("Ferdig trent. Evaluerer...");
-        nevraltNettverk.evaluer(testFlatBilder, preprocessing.getTestLabels());
+        LOGG.info("Ferdig trent. Evaluerer...");
+        nevraltNettverk.evaluer(testFlatBilder, dataLoader.getTestLabels());
 
-        System.out.println("FERDIG");
+        LOGG.info("FERDIG");
         // Oppgave a)
 //        final int numRows = 28;
 //        final int numColumns = 28;
@@ -57,13 +57,13 @@ public class NeuralNetwork1 {
 //        int numEpochs = 2; // number of epochs to perform
 //
 //        //Get the DataSetIterators:
-//        log.info("Fetching training data");
+//        LOGG.info("Fetching training data");
 //        DataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, true, rngSeed);
-//        log.info("Fetching test data");
+//        LOGG.info("Fetching test data");
 //        DataSetIterator mnistTest = new MnistDataSetIterator(batchSize, false, rngSeed);
 //
 //
-//        log.info("Build model....");
+//        LOGG.info("Build model....");
 //        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 //                .seed(rngSeed) //include a random seed for reproducibility
 //                // use stochastic gradient descent as an optimization algorithm
@@ -93,13 +93,13 @@ public class NeuralNetwork1 {
 //        //print the score with every 1 iteration
 //        model.setListeners(new ScoreIterationListener(1));
 //
-//        log.info("Train model....");
+//        LOGG.info("Train model....");
 //        for( int i=0; i<numEpochs; i++ ){
 //            model.fit(mnistTrain);
 //        }
 //
 //
-//        log.info("Evaluate model....");
+//        LOGG.info("Evaluate model....");
 //        Evaluation eval = new Evaluation(outputNum); //create an evaluation object with 10 possible classes
 //        while(mnistTest.hasNext()){
 //            DataSet next = mnistTest.next();
@@ -107,18 +107,18 @@ public class NeuralNetwork1 {
 //            eval.eval(next.getLabels(), output); //check the prediction against the true class
 //        }
 
-        //log.info(eval.stats());
-        //log.info("****************Example finished********************");
+        //LOGG.info(eval.stats());
+        //LOGG.info("****************Example finished********************");
     }
 
-    private static double[][][] normalize(int[][][] trainingImages) {
-        int numberOfImages = trainingImages.length;
-        int width = PreprocessingFactory.width;
-        int height = PreprocessingFactory.height;
+    private static double[][][] normalize(final int[][][] trainingImages) {
+        final int numberOfImages = trainingImages.length;
+        final int width = DataHelper.width;
+        final int height = DataHelper.height;
 
-        double[][][] normalizedImages = new double[numberOfImages][width][height];
+        final double[][][] normalizedImages = new double[numberOfImages][width][height];
 
-        double MAX_PIXEL_VERDI = 255.0; // FORDI VI VET DET :)
+        final double MAX_PIXEL_VERDI = 255.0; // FORDI VI VET DET :)
 
         for (int iCounter = 0; iCounter < numberOfImages; iCounter++) {
             for (int row = 0; row < width; row++) {
@@ -130,9 +130,9 @@ public class NeuralNetwork1 {
         return normalizedImages;
     }
 
-    private static double[][] flatMapImage(double[][][] images) {
-        int numberOfImages = images.length;
-        double[][] flatImages = new double[numberOfImages][images[0].length * images[0][0].length];
+    private static double[][] flatMapImage(final double[][][] images) {
+        final int numberOfImages = images.length;
+        final double[][] flatImages = new double[numberOfImages][images[0].length * images[0][0].length];
 
         for (int i = 0; i < numberOfImages; i++) {
             flatImages[i] = flatImage(images[i]);
@@ -140,12 +140,12 @@ public class NeuralNetwork1 {
         return flatImages;
     }
 
-    private static double[] flatImage(double[][] image) {
+    private static double[] flatImage(final double[][] image) {
         int counter = 0;
-        double[] flatImage = new double[image.length * image[0].length];
-        for (int col = 0; col < image.length; col++) {
-            for (int row = 0; row < image[col].length; row++) {
-                flatImage[counter] = image[col][row];
+        final double[] flatImage = new double[image.length * image[0].length];
+        for (final double[] anImage : image) {
+            for (final double anAnImage : anImage) {
+                flatImage[counter] = anAnImage;
                 counter++;
             }
         }
