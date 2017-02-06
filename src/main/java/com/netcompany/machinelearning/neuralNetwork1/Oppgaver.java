@@ -1,8 +1,7 @@
 package com.netcompany.machinelearning.neuralNetwork1;
 
-
-import com.netcompany.machinelearning.preprocessing.DataLoader;
-import com.netcompany.machinelearning.preprocessing.DataHelper;
+import com.netcompany.machinelearning.preprocessing.DataHjelper;
+import com.netcompany.machinelearning.preprocessing.DataLaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,38 +12,36 @@ public class Oppgaver {
     public static void main(final String[] args) throws Exception {
 
         // ###############################################################
-        // OPPGAVE 1: PREPROSSESERING -> FLAT UT OG NORMALISERE
+        // OPPGAVE 1: PREPROSSESERING -> NORMALISERE OG FLAT UT
         // ###############################################################
 
         final Boolean lesInnHeleDatasettet = false;
-        final DataLoader dataLoader = new DataLoader(lesInnHeleDatasettet);
+        final DataLaster dataLaster = new DataLaster(lesInnHeleDatasettet);
 
-        // a) Flat ut bildene
-        final double[][][] trainingImages = normalize(dataLoader.getTrainingImages());
-        final double[][][] testbilder = normalize(dataLoader.getTestImages());
+        //TODO: Flate ut først, deretter normalisere
+        // a) Normaliser bildene
+        final double[][][] trainingImages = normalize(dataLaster.getTreningsbilder());
+        final double[][][] testbilder = normalize(dataLaster.getTestbilder());
 
-        // b) Normaliser bildene
+        // b) Flat ut bildene
         final double[][] trainingFlatImages = flatMapImage(trainingImages);
         final double[][] testFlatBilder = flatMapImage(testbilder);
 
         // ###############################################################
-        // OPPGAVE 2: NEVRALT NETTVERK -> BYGG NETTVERK OG KJØR
+        // OPPGAVE 2: NEVRALT NETTVERK -> BYGG NETTVERK
         // ###############################################################
 
-        final NevraltNettverk nevraltNettverk =
-                new NevraltNettverkBygger()
-                        .leggTilLag(784, 100)
-                        .leggTilLag(100, 10)
-                        .bygg();
-
-        nevraltNettverk.setAntallEpoker(550);
-        nevraltNettverk.setBatchStorrelse(50);
+        final NevraltNettverk nevraltNettverk = new NevraltNettverkBygger().leggTilLag(784, 200)
+                                                                           .leggTilLag(200, 10)
+                                                                           .bygg();
+        nevraltNettverk.setAntallEpoker(300);
+        nevraltNettverk.setBatchStorrelse(500);
 
         LOGG.info("Trener..");
-        nevraltNettverk.tren(trainingFlatImages, dataLoader.getTrainingLabels());
+        nevraltNettverk.tren(trainingFlatImages, dataLaster.getTreningsfasit());
 
         LOGG.info("Ferdig trent. Evaluerer...");
-        nevraltNettverk.evaluer(testFlatBilder, dataLoader.getTestLabels());
+        nevraltNettverk.evaluer(testFlatBilder, dataLaster.getTestfasit());
 
         LOGG.info("FERDIG");
 
@@ -52,8 +49,8 @@ public class Oppgaver {
 
     private static double[][][] normalize(final int[][][] trainingImages) {
         final int numberOfImages = trainingImages.length;
-        final int width = DataHelper.width;
-        final int height = DataHelper.height;
+        final int width = DataHjelper.width;
+        final int height = DataHjelper.height;
 
         final double[][][] normalizedImages = new double[numberOfImages][width][height];
 
