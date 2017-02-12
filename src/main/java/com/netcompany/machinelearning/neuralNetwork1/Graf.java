@@ -22,7 +22,7 @@ class Graf extends ApplicationFrame implements IterationListener {
     private final DefaultCategoryDataset grafData;
 
     Graf(final int plottFrekvens) {
-        super("Graf");
+        super("Swing baby Swing!");
         grafData = new DefaultCategoryDataset();
         this.plottFrekvens = plottFrekvens;
         final JFreeChart linjeDiagram = ChartFactory.createLineChart(
