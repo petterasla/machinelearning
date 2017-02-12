@@ -73,6 +73,11 @@
             <artifactId>jcommon</artifactId>
             <version>${jcommon.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.graphstream</groupId>-->
             <!--<artifactId>gs-core</artifactId>-->

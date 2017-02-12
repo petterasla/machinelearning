@@ -15,7 +15,7 @@ public class Oppgaver {
         // OPPGAVE 1: PREPROSSESERING -> NORMALISERE OG FLAT UT
         // ###############################################################
 
-        final Boolean lesInnHeleDatasettet = false;
+        final Boolean lesInnHeleDatasettet = true;
         final DataLaster dataLaster = new DataLaster(lesInnHeleDatasettet);
 
         //TODO: Flate ut først, deretter normalisere
@@ -35,22 +35,19 @@ public class Oppgaver {
                                                                            .leggTilLag(200, 10)
                                                                            .bygg();
         nevraltNettverk.setAntallEpoker(300);
-        nevraltNettverk.setBatchStorrelse(500);
+        nevraltNettverk.setBatchStorrelse(200);
 
-        LOGG.info("Trener..");
         nevraltNettverk.tren(trainingFlatImages, dataLaster.getTreningsfasit());
 
-        LOGG.info("Ferdig trent. Evaluerer...");
         nevraltNettverk.evaluer(testFlatBilder, dataLaster.getTestfasit());
 
         LOGG.info("FERDIG");
-
     }
 
     private static double[][][] normalize(final int[][][] trainingImages) {
         final int numberOfImages = trainingImages.length;
-        final int width = DataHjelper.width;
-        final int height = DataHjelper.height;
+        final int width = DataHjelper.MNIST_BREDDE;
+        final int height = DataHjelper.MNIST_HOYDE;
 
         final double[][][] normalizedImages = new double[numberOfImages][width][height];
 
