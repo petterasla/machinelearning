@@ -36,7 +36,7 @@ public class BildeKlassifikator extends Application {
     @Override
     public void start(final Stage stage) {
 
-        GridPane gridPane = new GridPane();
+        final GridPane gridPane = new GridPane();
 
         final Button btnLoad = new Button("Load");
         final Label klasseLabel = new Label("Predikert tall: ");
@@ -44,19 +44,28 @@ public class BildeKlassifikator extends Application {
         btnLoad.setOnAction(lastOppKnappLytter);
         btnKlassifiser.setOnAction(klassifiserKnappLytter);
         btnKlassifiser.setDisable(true);
-
-        myImageView = new ImageView();
         klasse = new Text();
         klasse.setText("-");
 
+        myImageView = new ImageView();
+
+        gridPane.add(btnLoad, 0, 0);
+        gridPane.add(btnKlassifiser, 1, 0);
+        gridPane.add(myImageView, 0, 1, 2, 1);
+        gridPane.add(klasseLabel, 0, 2);
+        gridPane.add(klasse, 1, 2);
+
         final Group gruppe = new Group();
-        gridPane.add(btnLoad, 1, 1);
-        gridPane.add(btnKlassifiser, 2, 1);
-        gridPane.add(myImageView, 1, 2, 2, 1);
-        gridPane.add(klasseLabel, 1, 3);
-        gridPane.add(klasse, 2, 3);
         gruppe.getChildren().add(gridPane);
-        final Scene scene = new Scene(gruppe, 300, 300, Color.WHITE);
+        final Scene scene = new Scene(gruppe, 300, 350, Color.WHITE);
+
+        btnLoad.setPrefWidth(150);
+        btnKlassifiser.setPrefWidth(150);
+        myImageView.setPreserveRatio(true);
+        myImageView.setFitWidth(300);
+
+        btnLoad.setMaxWidth(Double.MAX_VALUE);
+        btnKlassifiser.setMaxWidth(Double.MAX_VALUE);
 
         stage.setTitle("Jaja, det er i alle fall ikke Swing...");
         stage.setScene(scene);
@@ -64,7 +73,7 @@ public class BildeKlassifikator extends Application {
     }
 
     public static void main(final String[] args) {
-        launch(args);
+        launch();
     }
 
     private final EventHandler<ActionEvent> klassifiserKnappLytter = new EventHandler<ActionEvent>() {
@@ -85,13 +94,13 @@ public class BildeKlassifikator extends Application {
 
         @Override
         public void handle(final ActionEvent t) {
-            final FileChooser fileChooser = new FileChooser();
+            final FileChooser filvelger = new FileChooser();
 
-            final FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)",
-                                                                                             "*.PNG");
-            fileChooser.getExtensionFilters().add(extFilterPNG);
+            final FileChooser.ExtensionFilter filtypeFilterPng = new FileChooser.ExtensionFilter("PNG files (*.png)",
+                                                                                                 "*.PNG");
+            filvelger.getExtensionFilters().add(filtypeFilterPng);
 
-            valgtFil = fileChooser.showOpenDialog(null);
+            valgtFil = filvelger.showOpenDialog(null);
 
             try {
                 final BufferedImage bufferedImage = ImageIO.read(valgtFil);
