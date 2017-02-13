@@ -1,4 +1,4 @@
-package com.netcompany.machinelearning.neuralNetwork1;
+package com.netcompany.machinelearning.app;
 
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
@@ -23,25 +23,23 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * User: Oystein Kvamme Repp
- */
-public class BildeKlassifikator extends Application {
+public class SifferKlassifikatorApp extends Application {
 
     private ImageView myImageView;
     private Text klasse;
     private Button btnKlassifiser;
     private File valgtFil;
+    private SifferKlassifikator klassifikator;
 
     @Override
     public void start(final Stage stage) {
 
         final GridPane gridPane = new GridPane();
 
-        final Button btnLoad = new Button("Load");
+        final Button btnLastInn = new Button("Velg bilde");
         final Label klasseLabel = new Label("Predikert tall: ");
         btnKlassifiser = new Button("Klassifiser");
-        btnLoad.setOnAction(lastOppKnappLytter);
+        btnLastInn.setOnAction(lastOppKnappLytter);
         btnKlassifiser.setOnAction(klassifiserKnappLytter);
         btnKlassifiser.setDisable(true);
         klasse = new Text();
@@ -49,7 +47,7 @@ public class BildeKlassifikator extends Application {
 
         myImageView = new ImageView();
 
-        gridPane.add(btnLoad, 0, 0);
+        gridPane.add(btnLastInn, 0, 0);
         gridPane.add(btnKlassifiser, 1, 0);
         gridPane.add(myImageView, 0, 1, 2, 1);
         gridPane.add(klasseLabel, 0, 2);
@@ -59,34 +57,26 @@ public class BildeKlassifikator extends Application {
         gruppe.getChildren().add(gridPane);
         final Scene scene = new Scene(gruppe, 300, 350, Color.WHITE);
 
-        btnLoad.setPrefWidth(150);
+        btnLastInn.setPrefWidth(150);
         btnKlassifiser.setPrefWidth(150);
         myImageView.setPreserveRatio(true);
         myImageView.setFitWidth(300);
 
-        btnLoad.setMaxWidth(Double.MAX_VALUE);
+        btnLastInn.setMaxWidth(Double.MAX_VALUE);
         btnKlassifiser.setMaxWidth(Double.MAX_VALUE);
+
+        klassifikator = new SifferKlassifikator();
 
         stage.setTitle("Jaja, det er i alle fall ikke Swing...");
         stage.setScene(scene);
         stage.show();
     }
 
-    public static void main(final String[] args) {
-        launch();
-    }
-
     private final EventHandler<ActionEvent> klassifiserKnappLytter = new EventHandler<ActionEvent>() {
         @Override
         public void handle(final ActionEvent event) {
-
-            /*TODO Oppgave 5? Bytt ut den heller dårlige random-klassifikatoren under.
-            Hint: Tren et nevralt nettverk å få modellen inn her på en eller annen måte.
-            Hint: Valgt fil er tilgjengelig i valgtFil
-            Hint: DataHjelper har en bildeTilIntArray-metode som sannsynligvis vil være til hjelp*/
-
-            final Integer predikertKlasse = (int) (Math.random() * 10);
-            klasse.setText(predikertKlasse.toString());
+            final Integer predikertSiffer = klassifikator.prediker(valgtFil);
+            klasse.setText(predikertSiffer.toString());
         }
     };
 
@@ -94,6 +84,7 @@ public class BildeKlassifikator extends Application {
 
         @Override
         public void handle(final ActionEvent t) {
+
             final FileChooser filvelger = new FileChooser();
 
             final FileChooser.ExtensionFilter filtypeFilterPng = new FileChooser.ExtensionFilter("PNG files (*.png)",
@@ -108,8 +99,12 @@ public class BildeKlassifikator extends Application {
                 myImageView.setImage(image);
                 btnKlassifiser.setDisable(valgtFil == null);
             } catch (final IOException ex) {
-                Logger.getLogger(BildeKlassifikator.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SifferKlassifikatorApp.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     };
+
+    public static void main(final String[] args) {
+        launch();
+    }
 }
